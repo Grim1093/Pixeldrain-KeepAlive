@@ -18,7 +18,7 @@ def main():
     # Step 1: Initialization & Environment Variables
     logging.info("Step 1: Initialization and Data Loading")
     
-    # We pull the API key securely from the cloud environment, not a local file
+    # Pull the API key securely from the cloud environment
     api_key = os.environ.get("PIXELDRAIN_API_KEY")
     if not api_key:
         logging.error("CRITICAL FAILURE: PIXELDRAIN_API_KEY environment variable not found. Point of failure: Missing Cloud Secrets.")
@@ -34,7 +34,57 @@ def main():
 
     files = tracker_data.get('files', [])
     if not files:
-        logging.error("CRITICAL FAILURE: No files found in tracker.json.")
+        # If the tracker is completely empty, we will still proceed so Auto-Sync can populate it
+        logging.warning("Warning: No files currently found in tracker.json. Relying on Auto-Sync to populate.")
+
+    # Step 1.5: The Auto-Sync Engine
+    logging.info("Step 1.5: Auto-Syncing with Live Pixeldrain Account")
+    live_files_url = "https://pixeldrain.com/api/user/files"
+    try:
+        sync_resp = requests.get(live_files_url, auth=('', api_key))
+        if sync_resp.status_code == 200:
+            live_data = sync_resp.json()
+            live_files = []
+            
+            if isinstance(live_data, dict) and "files" in live_data:
+                live_files = live_data["files"]
+            elif isinstance(live_data, list):
+                live_files = live_data
+                
+            tracked_ids = {f['id'] for f in files}
+            new_additions = 0
+            
+            for lf in live_files:
+                lf_id = lf.get("id")
+                # If the live file is NOT in our local memory, inject it
+                if lf_id and lf_id not in tracked_ids:
+                    files.append({
+                        "id": lf_id,
+                        "last_touched": "2026-01-01T00:00:00Z", # Old date ensures immediate targeting
+                        "views": 0,
+                        "downloads": 0
+                    })
+                    tracked_ids.add(lf_id)
+                    new_additions += 1
+            
+            if new_additions > 0:
+                logging.info(f"SUCCESS: Auto-Sync complete. Added {new_additions} new files to the tracker.")
+                # Update tracker_data with the newly appended list
+                tracker_data['files'] = files 
+            else:
+                logging.info("SUCCESS: Auto-Sync complete. No new files found.")
+                
+        elif sync_resp.status_code == 401:
+             logging.error("CRITICAL FAILURE: Auto-Sync Unauthorized. Your API key is invalid. Point of failure HTTP Status: 401")
+             return
+        else:
+            logging.warning(f"FAILURE: Auto-Sync API rejected request. Point of failure HTTP Status: {sync_resp.status_code}")
+    except Exception as e:
+        logging.error(f"FAILURE: Auto-Sync failed due to network error. Point of failure: {e}")
+
+    # Safety check in case the account is totally empty
+    if not files:
+        logging.error("CRITICAL FAILURE: No files available to process even after Auto-Sync. Exiting.")
         return
 
     # Step 2: Target Selection
@@ -52,7 +102,6 @@ def main():
         logging.info(f"Step 3: Fetching metadata for {file_id}")
         info_url = f"https://pixeldrain.com/api/file/{file_id}/info"
         try:
-            # Pixeldrain requires the API key in the password field of Basic Auth
             info_resp = requests.get(info_url, auth=('', api_key))
             if info_resp.status_code != 200:
                 logging.error(f"FAILURE: Info API rejected request for {file_id}. Point of failure HTTP Status: {info_resp.status_code}. API Response: {info_resp.text}")
