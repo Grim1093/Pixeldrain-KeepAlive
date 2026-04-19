@@ -34,10 +34,9 @@ def main():
 
     files = tracker_data.get('files', [])
     if not files:
-        # If the tracker is completely empty, we will still proceed so Auto-Sync can populate it
         logging.warning("Warning: No files currently found in tracker.json. Relying on Auto-Sync to populate.")
 
-    # Step 1.5: The Auto-Sync Engine
+    # Step 1.5: The Auto-Sync Engine (Additive and Subtractive)
     logging.info("Step 1.5: Auto-Syncing with Live Pixeldrain Account")
     live_files_url = "https://pixeldrain.com/api/user/files"
     try:
@@ -50,13 +49,25 @@ def main():
                 live_files = live_data["files"]
             elif isinstance(live_data, list):
                 live_files = live_data
-                
+            
+            # Create a set of live IDs for ultra-fast comparison
+            live_ids = {lf.get("id") for lf in live_files if lf.get("id")}
+            
+            # --- PHASE A: Garbage Collection (Subtractive Sync) ---
+            initial_count = len(files)
+            files = [f for f in files if f['id'] in live_ids]
+            removed_count = initial_count - len(files)
+            if removed_count > 0:
+                logging.info(f"SUCCESS: Garbage Collection complete. Removed {removed_count} ghost file(s) from memory.")
+            else:
+                logging.info("SUCCESS: Garbage Collection complete. No ghost files detected.")
+
+            # --- PHASE B: Injection (Additive Sync) ---
             tracked_ids = {f['id'] for f in files}
             new_additions = 0
             
             for lf in live_files:
                 lf_id = lf.get("id")
-                # If the live file is NOT in our local memory, inject it
                 if lf_id and lf_id not in tracked_ids:
                     files.append({
                         "id": lf_id,
@@ -68,11 +79,12 @@ def main():
                     new_additions += 1
             
             if new_additions > 0:
-                logging.info(f"SUCCESS: Auto-Sync complete. Added {new_additions} new files to the tracker.")
-                # Update tracker_data with the newly appended list
-                tracker_data['files'] = files 
+                logging.info(f"SUCCESS: Auto-Sync Additions complete. Added {new_additions} new files to the tracker.")
             else:
-                logging.info("SUCCESS: Auto-Sync complete. No new files found.")
+                logging.info("SUCCESS: Auto-Sync Additions complete. No new files found.")
+            
+            # Commit the fully synced list back to the main memory structure
+            tracker_data['files'] = files 
                 
         elif sync_resp.status_code == 401:
              logging.error("CRITICAL FAILURE: Auto-Sync Unauthorized. Your API key is invalid. Point of failure HTTP Status: 401")
