@@ -25,17 +25,22 @@ function logToTerminal(message, level = "INFO") {
 async function initDashboard() {
     logToTerminal("--- STARTING DASHBOARD INITIALIZATION ---");
     
-    // Step 1: Data Retrieval
-    logToTerminal("Step 1: Fetching tracker.json from repository database...");
+    // Step 1: Data Retrieval & Cache Busting
+    logToTerminal("Step 1: Initializing network request with Cache Busting...");
     let trackerData;
     try {
-        const response = await fetch('tracker.json');
+        // Appending a unique timestamp forces the browser to ignore its local cache
+        const cacheBuster = new Date().getTime();
+        const fetchUrl = `tracker.json?nocache=${cacheBuster}`;
+        logToTerminal(`Executing fetch from: ${fetchUrl}`);
+        
+        const response = await fetch(fetchUrl);
         if (!response.ok) {
             logToTerminal(`CRITICAL FAILURE: Network rejected request. Point of failure HTTP Status: ${response.status}`, "ERROR");
             return;
         }
         trackerData = await response.json();
-        logToTerminal("SUCCESS: tracker.json loaded into memory.");
+        logToTerminal("SUCCESS: Fresh tracker.json loaded directly from the cloud repository.");
     } catch (error) {
         logToTerminal(`CRITICAL FAILURE: Failed to parse tracker.json. Point of failure: ${error.message}`, "ERROR");
         return;
