@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixeldrain Keep-Alive Monitor</title>
+    <style>
+        :root {
+            --bg-color: #0c0c0c;
+            --text-color: #00ff00;
+            --border-color: #004400;
+            --header-bg: #002200;
+            --error-color: #ff3333;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: left;
+            border-bottom: 1px dashed var(--text-color);
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+        /* The Visual Diagnostic Terminal */
+        .terminal {
+            background-color: #000;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            margin-bottom: 20px;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--header-bg);
+        }
+        tbody tr:hover {
+            background-color: #001100;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>> PIXELDRAIN_VAULT_MONITOR_v1.0</h1>
+
+    <div class="terminal" id="terminal-output">
+        </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>FILE_ID</th>
+                <th>LAST_TOUCHED (UTC)</th>
+                <th>VIEWS</th>
+                <th>DOWNLOADS</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
