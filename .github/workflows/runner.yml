@@ -1,0 +1,60 @@
+name: Pixeldrain Keep-Alive Engine
+
+on:
+  schedule:
+    # Runs at 02:00 UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows you to trigger the script manually from the GitHub UI for testing
+
+jobs:
+  keep-alive-job:
+    runs-on: ubuntu-latest
+    
+    # Grants the server permission to commit the modified files back to your repository
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          echo "--- CLOUD ENVIRONMENT SETUP ---"
+          echo "[STEP] Upgrading pip..."
+          python -m pip install --upgrade pip
+          echo "[STEP] Installing libraries from requirements.txt..."
+          pip install -r requirements.txt
+          echo "[SUCCESS] Environment ready."
+
+      - name: Execute Keep-Alive Script
+        env:
+          # Injects your API key from GitHub Secrets into the environment
+          PIXELDRAIN_API_KEY: ${{ secrets.PIXELDRAIN_API_KEY }}
+        run: |
+          echo "[STEP] Executing keep_alive.py..."
+          python keep_alive.py
+          echo "[SUCCESS] Python script execution finished."
+
+      - name: Commit and Push Updated Memory and Logs
+        run: |
+          echo "--- STATE PRESERVATION ---"
+          echo "[STEP] Configuring Git bot..."
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          echo "[STEP] Staging tracker.json and app.log..."
+          git add tracker.json app.log
+          
+          echo "[STEP] Committing changes..."
+          # The || part prevents the workflow from crashing if no files were modified today
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update tracker and log state"
+          
+          echo "[STEP] Pushing to main branch..."
+          git push
+          echo "[SUCCESS] State preserved and pushed successfully."
