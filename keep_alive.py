@@ -82,9 +82,6 @@ def main():
                 logging.info(f"SUCCESS: Auto-Sync Additions complete. Added {new_additions} new files to the tracker.")
             else:
                 logging.info("SUCCESS: Auto-Sync Additions complete. No new files found.")
-            
-            # Commit the fully synced list back to the main memory structure
-            tracker_data['files'] = files 
                 
         elif sync_resp.status_code == 401:
              logging.error("CRITICAL FAILURE: Auto-Sync Unauthorized. Your API key is invalid. Point of failure HTTP Status: 401")
@@ -98,6 +95,26 @@ def main():
     if not files:
         logging.error("CRITICAL FAILURE: No files available to process even after Auto-Sync. Exiting.")
         return
+
+    # Step 1.75: Global Stats Sync (Bypassing Eventual Consistency)
+    logging.info("Step 1.75: Executing Global Stats Sync to fetch real-time Master Database metrics")
+    sync_success_count = 0
+    for f_obj in files:
+        f_id = f_obj['id']
+        info_url = f"https://pixeldrain.com/api/file/{f_id}/info"
+        try:
+            info_resp = requests.get(info_url, auth=('', api_key))
+            if info_resp.status_code == 200:
+                info_json = info_resp.json()
+                f_obj['views'] = info_json.get("views", 0)
+                f_obj['downloads'] = info_json.get("downloads", 0)
+                sync_success_count += 1
+            else:
+                logging.warning(f"WARNING: Global Sync rejected for {f_id}. Point of failure HTTP Status: {info_resp.status_code}")
+        except Exception as e:
+            logging.warning(f"WARNING: Global Sync failed for {f_id} due to network error. Point of failure: {e}")
+            
+    logging.info(f"SUCCESS: Global Stats Sync complete. Updated real-time metrics for {sync_success_count}/{len(files)} files.")
 
     # Step 2: Target Selection
     logging.info("Step 2: Target Selection (Scanning for oldest 'last_touched' dates)")
@@ -117,7 +134,7 @@ def main():
         # Standard browser User-Agent used for all requests in this session
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         
-        # Step 3: Info Check
+        # Step 3: Info Check (For Keep-Alive byte calculation)
         logging.info(f"Step 3: Fetching metadata for {file_id}")
         info_url = f"https://pixeldrain.com/api/file/{file_id}/info"
         try:
@@ -178,6 +195,8 @@ def main():
     # Final Save
     logging.info("Step 6: Committing new state to tracker.json")
     try:
+        # Save the updated list with the real-time Global Sync metrics included
+        tracker_data['files'] = files 
         with open('tracker.json', 'w') as f:
             json.dump(tracker_data, f, indent=2)
         logging.info("Successfully updated memory tracker.")
