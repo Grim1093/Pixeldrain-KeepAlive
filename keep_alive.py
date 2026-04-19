@@ -110,11 +110,18 @@ def main():
         file_id = target['id']
         logging.info(f"--- Processing File ID: {file_id} ---")
         
+        # Initialize a Session for cookie continuity
+        session = requests.Session()
+        logging.info("Initialized simulated browser session.")
+        
+        # Standard browser User-Agent used for all requests in this session
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        
         # Step 3: Info Check
         logging.info(f"Step 3: Fetching metadata for {file_id}")
         info_url = f"https://pixeldrain.com/api/file/{file_id}/info"
         try:
-            info_resp = requests.get(info_url, auth=('', api_key))
+            info_resp = session.get(info_url, auth=('', api_key))
             if info_resp.status_code != 200:
                 logging.error(f"FAILURE: Info API rejected request for {file_id}. Point of failure HTTP Status: {info_resp.status_code}. API Response: {info_resp.text}")
                 continue
@@ -126,33 +133,36 @@ def main():
             
             logging.info(f"Status check passed - Size: {file_size} bytes, Views: {target['views']}, Downloads: {target['downloads']}")
 
-            # Step 3.5: View Generation (The Web Spoof)
-            logging.info(f"Step 3.5: Generating web view for {file_id} to maintain 1:1 ratio")
+            # Step 3.5: View Generation (The Web Spoof with Cookie Capture)
+            logging.info(f"Step 3.5: Generating web view for {file_id} to capture cookies")
             view_url = f"https://pixeldrain.com/u/{file_id}"
             try:
-                # We use a standard browser User-Agent to make the spoof look authentic
-                headers_view = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                }
-                view_resp = requests.get(view_url, headers=headers_view, timeout=10)
+                headers_view = {"User-Agent": user_agent}
+                view_resp = session.get(view_url, headers=headers_view, timeout=10)
                 if view_resp.status_code == 200:
-                    logging.info(f"SUCCESS: Web view registered for {file_id}.")
+                    logging.info(f"SUCCESS: Web view registered. Session cookies captured for {file_id}.")
                 else:
                     logging.warning(f"WARNING: Web view returned unexpected HTTP Status: {view_resp.status_code}")
             except Exception as e:
                 logging.warning(f"WARNING: View generation failed due to network error. Point of failure: {e}")
 
-            # Step 4: The 15% Range Request
-            logging.info(f"Step 4: Initiating 15% partial download for {file_id}")
+            # Step 4: The 15% Range Request (Passing the Session and Referer)
+            logging.info(f"Step 4: Initiating 15% partial download utilizing session continuity")
             if file_size == 0:
                 logging.warning(f"SKIPPED: File {file_id} has size 0. Nothing to download.")
                 continue
             
             bytes_to_fetch = int(file_size * 0.15)
-            headers = {"Range": f"bytes=0-{bytes_to_fetch}"}
+            
+            # The exact proof the server needs to link the view to the download
+            headers_dl = {
+                "Range": f"bytes=0-{bytes_to_fetch}",
+                "User-Agent": user_agent,
+                "Referer": view_url
+            }
 
             download_url = f"https://pixeldrain.com/api/file/{file_id}"
-            dl_resp = requests.get(download_url, headers=headers, auth=('', api_key))
+            dl_resp = session.get(download_url, headers=headers_dl, auth=('', api_key))
             
             # Step 5: Error Handling
             if dl_resp.status_code in (200, 206):
