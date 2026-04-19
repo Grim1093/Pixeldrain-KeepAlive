@@ -126,6 +126,22 @@ def main():
             
             logging.info(f"Status check passed - Size: {file_size} bytes, Views: {target['views']}, Downloads: {target['downloads']}")
 
+            # Step 3.5: View Generation (The Web Spoof)
+            logging.info(f"Step 3.5: Generating web view for {file_id} to maintain 1:1 ratio")
+            view_url = f"https://pixeldrain.com/u/{file_id}"
+            try:
+                # We use a standard browser User-Agent to make the spoof look authentic
+                headers_view = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                }
+                view_resp = requests.get(view_url, headers=headers_view, timeout=10)
+                if view_resp.status_code == 200:
+                    logging.info(f"SUCCESS: Web view registered for {file_id}.")
+                else:
+                    logging.warning(f"WARNING: Web view returned unexpected HTTP Status: {view_resp.status_code}")
+            except Exception as e:
+                logging.warning(f"WARNING: View generation failed due to network error. Point of failure: {e}")
+
             # Step 4: The 15% Range Request
             logging.info(f"Step 4: Initiating 15% partial download for {file_id}")
             if file_size == 0:
