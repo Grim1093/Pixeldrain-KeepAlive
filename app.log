@@ -809,3 +809,33 @@
 [2026-05-14 05:40:17] INFO - Step 6: Committing new state to tracker.json
 [2026-05-14 05:40:17] INFO - Successfully updated memory tracker.
 [2026-05-14 05:40:17] INFO - --- CYCLE COMPLETE ---
+[2026-05-15 05:46:02] INFO - --- STARTING CLOUD EXECUTION CYCLE ---
+[2026-05-15 05:46:02] INFO - Step 1: Initialization and Data Loading
+[2026-05-15 05:46:02] INFO - Successfully loaded tracker.json
+[2026-05-15 05:46:02] INFO - Step 1.5: Auto-Syncing with Live Pixeldrain Account
+[2026-05-15 05:46:03] INFO - SUCCESS: Garbage Collection complete. No ghost files detected.
+[2026-05-15 05:46:03] INFO - SUCCESS: Auto-Sync Additions complete. No new files found.
+[2026-05-15 05:46:03] INFO - Step 1.75: Executing Global Stats Sync to fetch real-time Master Database metrics
+[2026-05-15 05:46:05] INFO - SUCCESS: Global Stats Sync complete. Updated real-time metrics for 8/8 files.
+[2026-05-15 05:46:05] INFO - Step 2: Target Selection (Scanning for oldest 'last_touched' dates)
+[2026-05-15 05:46:05] INFO - Selected targets for today's cycle: ['ShhfL2VF', 'AXK2Btkc']
+[2026-05-15 05:46:05] INFO - --- Processing File ID: ShhfL2VF ---
+[2026-05-15 05:46:05] INFO - Initialized simulated browser session.
+[2026-05-15 05:46:05] INFO - Step 3: Fetching metadata for ShhfL2VF
+[2026-05-15 05:46:05] INFO - Status check passed - Size: 1562574 bytes, Views: 1, Downloads: 2
+[2026-05-15 05:46:05] INFO - Step 3.5: Generating web view for ShhfL2VF to capture cookies
+[2026-05-15 05:46:05] INFO - SUCCESS: Web view registered. Session cookies captured for ShhfL2VF.
+[2026-05-15 05:46:05] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-05-15 05:46:05] ERROR - FAILURE: Download rejected for ShhfL2VF. Point of failure HTTP Status: 403. API Response: {"success":false,"value":"file_rate_limited_captcha_required","message":"We have detected the use of hotlinking for this file. Hotlinking is only supported when either the uploader or the downloader has a paid subscription"}
+
+[2026-05-15 05:46:05] INFO - --- Processing File ID: AXK2Btkc ---
+[2026-05-15 05:46:05] INFO - Initialized simulated browser session.
+[2026-05-15 05:46:05] INFO - Step 3: Fetching metadata for AXK2Btkc
+[2026-05-15 05:46:06] INFO - Status check passed - Size: 12943515 bytes, Views: 1, Downloads: 5
+[2026-05-15 05:46:06] INFO - Step 3.5: Generating web view for AXK2Btkc to capture cookies
+[2026-05-15 05:46:06] INFO - SUCCESS: Web view registered. Session cookies captured for AXK2Btkc.
+[2026-05-15 05:46:06] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-05-15 05:46:07] INFO - SUCCESS: Partial chunk fetched for AXK2Btkc. HTTP Status: 206
+[2026-05-15 05:46:07] INFO - Step 6: Committing new state to tracker.json
+[2026-05-15 05:46:07] INFO - Successfully updated memory tracker.
+[2026-05-15 05:46:07] INFO - --- CYCLE COMPLETE ---
