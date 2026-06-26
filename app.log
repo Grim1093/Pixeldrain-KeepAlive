@@ -2077,3 +2077,34 @@
 [2026-06-25 05:56:47] INFO - Step 6: Committing new state to tracker.json
 [2026-06-25 05:56:47] INFO - Successfully updated memory tracker.
 [2026-06-25 05:56:47] INFO - --- CYCLE COMPLETE ---
+[2026-06-26 06:00:21] INFO - --- STARTING CLOUD EXECUTION CYCLE ---
+[2026-06-26 06:00:21] INFO - Step 1: Initialization and Data Loading
+[2026-06-26 06:00:21] INFO - Successfully loaded tracker.json
+[2026-06-26 06:00:21] INFO - Step 1.5: Auto-Syncing with Live Pixeldrain Account
+[2026-06-26 06:00:22] INFO - SUCCESS: Garbage Collection complete. No ghost files detected.
+[2026-06-26 06:00:22] INFO - SUCCESS: Auto-Sync Additions complete. No new files found.
+[2026-06-26 06:00:22] INFO - Step 1.75: Executing Global Stats Sync to fetch real-time Master Database metrics
+[2026-06-26 06:00:25] INFO - SUCCESS: Global Stats Sync complete. Updated real-time metrics for 7/7 files.
+[2026-06-26 06:00:25] INFO - Step 2: Target Selection (Scanning for oldest 'last_touched' dates)
+[2026-06-26 06:00:25] INFO - Selected targets for today's cycle: ['MDr241Ld', 'AXK2Btkc']
+[2026-06-26 06:00:25] INFO - --- Processing File ID: MDr241Ld ---
+[2026-06-26 06:00:25] INFO - Initialized simulated browser session.
+[2026-06-26 06:00:25] INFO - Step 3: Fetching metadata for MDr241Ld
+[2026-06-26 06:00:25] INFO - Status check passed - Size: 13995959 bytes, Views: 1, Downloads: 10
+[2026-06-26 06:00:25] INFO - Step 3.5: Generating web view for MDr241Ld to capture cookies
+[2026-06-26 06:00:26] INFO - SUCCESS: Web view registered. Session cookies captured for MDr241Ld.
+[2026-06-26 06:00:26] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-06-26 06:00:26] ERROR - FAILURE: Download rejected for MDr241Ld. Point of failure HTTP Status: 403. API Response: {"success":false,"value":"file_rate_limited_captcha_required","message":"We have detected the use of hotlinking for this file. Hotlinking is only supported when either the uploader or the downloader has a paid subscription"}
+
+[2026-06-26 06:00:26] INFO - --- Processing File ID: AXK2Btkc ---
+[2026-06-26 06:00:26] INFO - Initialized simulated browser session.
+[2026-06-26 06:00:26] INFO - Step 3: Fetching metadata for AXK2Btkc
+[2026-06-26 06:00:26] INFO - Status check passed - Size: 12943515 bytes, Views: 1, Downloads: 10
+[2026-06-26 06:00:26] INFO - Step 3.5: Generating web view for AXK2Btkc to capture cookies
+[2026-06-26 06:00:27] INFO - SUCCESS: Web view registered. Session cookies captured for AXK2Btkc.
+[2026-06-26 06:00:27] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-06-26 06:00:27] ERROR - FAILURE: Download rejected for AXK2Btkc. Point of failure HTTP Status: 403. API Response: {"success":false,"value":"file_rate_limited_captcha_required","message":"We have detected the use of hotlinking for this file. Hotlinking is only supported when either the uploader or the downloader has a paid subscription"}
+
+[2026-06-26 06:00:27] INFO - Step 6: Committing new state to tracker.json
+[2026-06-26 06:00:27] INFO - Successfully updated memory tracker.
+[2026-06-26 06:00:27] INFO - --- CYCLE COMPLETE ---
