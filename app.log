@@ -5905,3 +5905,33 @@
 [2026-10-27 06:59:37] INFO - Step 6: Committing new state to tracker.json
 [2026-10-27 06:59:37] INFO - Successfully updated memory tracker.
 [2026-10-27 06:59:37] INFO - --- CYCLE COMPLETE ---
+[2026-10-28 07:41:56] INFO - --- STARTING CLOUD EXECUTION CYCLE ---
+[2026-10-28 07:41:56] INFO - Step 1: Initialization and Data Loading
+[2026-10-28 07:41:56] INFO - Successfully loaded tracker.json
+[2026-10-28 07:41:56] INFO - Step 1.5: Auto-Syncing with Live Pixeldrain Account
+[2026-10-28 07:41:57] INFO - SUCCESS: Garbage Collection complete. No ghost files detected.
+[2026-10-28 07:41:57] INFO - SUCCESS: Auto-Sync Additions complete. No new files found.
+[2026-10-28 07:41:57] INFO - Step 1.75: Executing Global Stats Sync to fetch real-time Master Database metrics
+[2026-10-28 07:41:59] INFO - SUCCESS: Global Stats Sync complete. Updated real-time metrics for 3/3 files.
+[2026-10-28 07:41:59] INFO - Step 2: Target Selection (Scanning for oldest 'last_touched' dates)
+[2026-10-28 07:41:59] INFO - Selected targets for today's cycle: ['tCa3bk2N', 'FVJLb6VN']
+[2026-10-28 07:41:59] INFO - --- Processing File ID: tCa3bk2N ---
+[2026-10-28 07:41:59] INFO - Initialized simulated browser session.
+[2026-10-28 07:41:59] INFO - Step 3: Fetching metadata for tCa3bk2N
+[2026-10-28 07:41:59] INFO - Status check passed - Size: 11042813 bytes, Views: 1, Downloads: 15
+[2026-10-28 07:41:59] INFO - Step 3.5: Generating web view for tCa3bk2N to capture cookies
+[2026-10-28 07:41:59] INFO - SUCCESS: Web view registered. Session cookies captured for tCa3bk2N.
+[2026-10-28 07:41:59] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-10-28 07:42:00] ERROR - FAILURE: Download rejected for tCa3bk2N. Point of failure HTTP Status: 403. API Response: {"success":false,"value":"file_rate_limited_captcha_required","message":"We have detected the use of hotlinking for this file. Hotlinking is only supported when either the uploader or the downloader has a paid subscription"}
+
+[2026-10-28 07:42:00] INFO - --- Processing File ID: FVJLb6VN ---
+[2026-10-28 07:42:00] INFO - Initialized simulated browser session.
+[2026-10-28 07:42:00] INFO - Step 3: Fetching metadata for FVJLb6VN
+[2026-10-28 07:42:00] INFO - Status check passed - Size: 165286969 bytes, Views: 4, Downloads: 19
+[2026-10-28 07:42:00] INFO - Step 3.5: Generating web view for FVJLb6VN to capture cookies
+[2026-10-28 07:42:00] INFO - SUCCESS: Web view registered. Session cookies captured for FVJLb6VN.
+[2026-10-28 07:42:00] INFO - Step 4: Initiating 15% partial download utilizing session continuity
+[2026-10-28 07:42:05] INFO - SUCCESS: Partial chunk fetched for FVJLb6VN. HTTP Status: 206
+[2026-10-28 07:42:05] INFO - Step 6: Committing new state to tracker.json
+[2026-10-28 07:42:05] INFO - Successfully updated memory tracker.
+[2026-10-28 07:42:05] INFO - --- CYCLE COMPLETE ---
